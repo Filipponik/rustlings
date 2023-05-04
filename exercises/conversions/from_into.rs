@@ -39,6 +39,46 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        if s.len() == 0 {
+            return Default::default();
+        }
+
+        let mut words_iter = s.split(",").into_iter();
+
+        let mut name: String;
+        let name_parsed = words_iter.next();
+        if let Some(name_result) = name_parsed {
+            name = name_result.to_string();
+        } else {
+            return Default::default();
+        }
+
+        if name.is_empty() {
+            return Default::default();
+        }
+
+        let mut age: usize;
+        let age_parsed = words_iter.next();//.unwrap().parse::<usize>();
+        if let Some(maybe_age) = age_parsed {
+            let maybe_age2 = maybe_age.parse::<usize>();
+            if let Ok(real_age) = maybe_age2 {
+                age = real_age;
+            } else {
+                return Default::default();
+            }
+        } else {
+            return Default::default();
+        }
+
+        let something = words_iter.next();
+        if !something.is_none() {
+            return Default::default();
+        }
+
+        Person {
+            name,
+            age
+        }
     }
 }
 
