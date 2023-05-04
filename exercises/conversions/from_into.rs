@@ -45,33 +45,29 @@ impl From<&str> for Person {
 
         let mut words_iter = s.split(",").into_iter();
 
-        let mut name: String;
-        let name_parsed = words_iter.next();
-        if let Some(name_result) = name_parsed {
-            name = name_result.to_string();
-        } else {
-            return Default::default();
-        }
+        let name: String = match words_iter.next() {
+            Some(name_result) => {
+                let result = name_result.to_string();
+                if result.is_empty() {
+                    return Default::default();
+                }
+                result
+            },
+            _ => return Default::default()
+        };
 
-        if name.is_empty() {
-            return Default::default();
-        }
+        let age: usize = match words_iter.next() {
+            Some(maybe_age) => {
+                let age_as_number = maybe_age.parse::<usize>();
+                if let Err(_) = age_as_number {
+                    return Default::default();
+                }
+                age_as_number.unwrap()
+            },
+            _ => return Default::default()
+        };
 
-        let mut age: usize;
-        let age_parsed = words_iter.next();//.unwrap().parse::<usize>();
-        if let Some(maybe_age) = age_parsed {
-            let maybe_age2 = maybe_age.parse::<usize>();
-            if let Ok(real_age) = maybe_age2 {
-                age = real_age;
-            } else {
-                return Default::default();
-            }
-        } else {
-            return Default::default();
-        }
-
-        let something = words_iter.next();
-        if !something.is_none() {
+        if !words_iter.next().is_none() {
             return Default::default();
         }
 
