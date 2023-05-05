@@ -23,8 +23,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need to create an implementation for a tuple of three integers,
@@ -38,6 +36,18 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let red: Result<u8, std::num::TryFromIntError> = tuple.0.try_into();
+        let green: Result<u8, std::num::TryFromIntError>  = tuple.1.try_into();
+        let blue: Result<u8, std::num::TryFromIntError>  = tuple.2.try_into();
+
+        match (red, green, blue) {
+            (Ok(r), Ok(g), Ok(b)) => Ok(Color {
+                red: r,
+                green: g,
+                blue: b
+            }),
+            _ => Err(IntoColorError::IntConversion)
+        }
     }
 }
 
@@ -45,6 +55,18 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let red: Result<u8, std::num::TryFromIntError> = arr[0].try_into();
+        let green: Result<u8, std::num::TryFromIntError>  = arr[1].try_into();
+        let blue: Result<u8, std::num::TryFromIntError>  = arr[2].try_into();
+
+        match (red, green, blue) {
+            (Ok(r), Ok(g), Ok(b)) => Ok(Color {
+                red: r,
+                green: g,
+                blue: b
+            }),
+            _ => Err(IntoColorError::IntConversion)
+        }
     }
 }
 
@@ -52,6 +74,22 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen)
+        }
+
+        let red: Result<u8, std::num::TryFromIntError> = slice[0].try_into();
+        let green: Result<u8, std::num::TryFromIntError>  = slice[1].try_into();
+        let blue: Result<u8, std::num::TryFromIntError>  = slice[2].try_into();
+
+        match (red, green, blue) {
+            (Ok(r), Ok(g), Ok(b)) => Ok(Color {
+                red: r,
+                green: g,
+                blue: b
+            }),
+            _ => Err(IntoColorError::IntConversion)
+        }
     }
 }
 
