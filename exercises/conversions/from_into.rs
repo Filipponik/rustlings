@@ -35,45 +35,31 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of Person
 // Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-        if s.len() == 0 {
+        let mut words_iter = s.split(',');
+
+        // Get name, use None if empty string
+        let name: Option<String> = words_iter.next().and_then(|name_result| {
+            if name_result.is_empty() {
+                None
+            } else {
+                Some(name_result.to_string())
+            }
+        });
+
+        // Get age, use None if empty string or parse error
+        let age: Option<usize> = words_iter.next().and_then(|maybe_age| maybe_age.parse::<usize>().ok());
+
+        // Check if there are more than 2 values
+        if words_iter.next().is_some() {
             return Default::default();
         }
 
-        let mut words_iter = s.split(",").into_iter();
-
-        let name: String = match words_iter.next() {
-            Some(name_result) => {
-                let result = name_result.to_string();
-                if result.is_empty() {
-                    return Default::default();
-                }
-                result
-            },
-            _ => return Default::default()
-        };
-
-        let age: usize = match words_iter.next() {
-            Some(maybe_age) => {
-                let age_as_number = maybe_age.parse::<usize>();
-                if let Err(_) = age_as_number {
-                    return Default::default();
-                }
-                age_as_number.unwrap()
-            },
-            _ => return Default::default()
-        };
-
-        if !words_iter.next().is_none() {
-            return Default::default();
-        }
-
-        Person {
-            name,
-            age
+        // Match both name and age, return default Person if either is None
+        match (name, age) {
+            (Some(n), Some(a)) => Person { name: n, age: a },
+            _ => Default::default(),
         }
     }
 }
