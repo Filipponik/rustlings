@@ -66,16 +66,11 @@ impl FromStr for Person {
         }?;
 
         let age: usize = match words_iter.next() {
-            Some(age_parsed) => {
-                age_parsed.parse::<usize>().map_err(ParsePersonError::ParseInt)
-            }
-            _ => Err(ParsePersonError::NoName)
+            Some(age_parsed) => age_parsed.parse::<usize>().map_err(ParsePersonError::ParseInt),
+            _ => Err(ParsePersonError::BadLen)
         }?;
 
-        Ok(Person{
-            age,
-            name
-        })
+        Ok(Person{age, name})
     }
 }
 
